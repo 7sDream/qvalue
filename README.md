@@ -1,5 +1,7 @@
 # QValues
 
+[Document](https://pkg.go.dev/github.com/7sDream/qvalue)
+
 QValues is a parser for [Quality values](https://developer.mozilla.org/en-US/docs/Glossary/Quality_values). It's commonly used in HTTP Header like `Accept`, `Accept-Language`, `Accept-Encoding` etc.
 
 The quality value this package provided is multiplied by 1000, for avoid float point sort.
