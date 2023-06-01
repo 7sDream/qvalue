@@ -1,5 +1,7 @@
 package qvalue
 
+import "sort"
+
 type byQualityThenIndex []*QValue
 
 func (a byQualityThenIndex) Len() int      { return len(a) }
@@ -12,4 +14,10 @@ func (a byQualityThenIndex) Less(i, j int) bool {
 	}
 
 	return false
+}
+
+// Sort a quality value list by items' quality,
+// item which occurs first takes precedence if quality is same.
+func Sort(qvs []*QValue) {
+	sort.Sort(byQualityThenIndex(qvs))
 }

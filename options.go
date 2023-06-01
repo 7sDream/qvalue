@@ -12,6 +12,13 @@ var (
 	QualityRangeError = errors.New("Quality should be in range of [0.0, 1.0]")
 )
 
+const (
+	qualityFloatMin float64 = 0.0
+	qualityFloatMax float64 = 1.0
+	multiplier      float64 = 1e3
+	qualityUintMax  uint    = uint(qualityFloatMax * multiplier)
+)
+
 // Options is configure for this parser.
 type Options struct {
 	ignoreQualityParseError bool
@@ -29,14 +36,14 @@ func NewOptions() *Options {
 	return &Options{
 		ignoreQualityParseError: false,
 		ignoreQualityRangeError: false,
-		defaultQuality:          1000,
+		defaultQuality:          qualityUintMax,
 	}
 }
 
 // IgnoreQualityParseError makes this parse option ignore `QualityParseError`,
 // and set the item's quality to `value` if this error happened.
 func (o *Options) IgnoreQualityParseError(value uint) *Options {
-	if value > 1000 {
+	if value > qualityUintMax {
 		panic("quality value can't bigger then 1000")
 	}
 
@@ -49,7 +56,7 @@ func (o *Options) IgnoreQualityParseError(value uint) *Options {
 // IgnoreQualityParseError makes this parse option ignore `QualityRangeError`
 // and set the item's quality to `value` if this error happened.
 func (o *Options) IgnoreQualityRangeError(value uint) *Options {
-	if value > 1000 {
+	if value > qualityUintMax {
 		panic("quality value can't bigger then 1000")
 	}
 
@@ -62,7 +69,7 @@ func (o *Options) IgnoreQualityRangeError(value uint) *Options {
 // SetDefaultQuality set the default quality if a item do not have it.
 // The default is 1.0, according to the spec.
 func (o *Options) SetDefaultQuality(value uint) *Options {
-	if value > 100 {
+	if value > qualityUintMax {
 		panic("quality value can't bigger then 1000")
 	}
 

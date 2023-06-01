@@ -2,7 +2,6 @@ package qvalue
 
 import (
 	"math"
-	"sort"
 	"strconv"
 	"strings"
 )
@@ -33,14 +32,14 @@ func (o *Options) parseOne(s string) (*QValue, error) {
 				return nil, QualityParseError
 			}
 		} else {
-			if math.IsNaN(qualityFloat) || qualityFloat < 0 || qualityFloat > 1 {
+			if math.IsNaN(qualityFloat) || qualityFloat < qualityFloatMin || qualityFloat > qualityFloatMax {
 				if o.ignoreQualityRangeError {
 					quality = o.qualityForRangeError
 				} else {
 					return nil, QualityRangeError
 				}
 			} else {
-				quality = uint(math.Round(qualityFloat * 1000))
+				quality = uint(math.Round(qualityFloat * multiplier))
 			}
 		}
 	}
@@ -51,7 +50,8 @@ func (o *Options) parseOne(s string) (*QValue, error) {
 	}, nil
 }
 
-func (o *Options) parse(s string, sorted bool) ([]*QValue, error) {
+// Parse a quality value series.
+func (o *Options) Parse(s string) ([]*QValue, error) {
 	parts := strings.Split(s, ",")
 
 	if len(parts) == 0 {
@@ -68,19 +68,17 @@ func (o *Options) parse(s string, sorted bool) ([]*QValue, error) {
 		result = append(result, qValue)
 	}
 
-	if sorted {
-		sort.Sort(byQualityThenIndex(result))
-	}
-
 	return result, nil
-}
-
-// Parse a quality value series.
-func (o *Options) Parse(s string) ([]*QValue, error) {
-	return o.parse(s, false)
 }
 
 // Parse a quality value series, and sort items according to their quality.
 func (o *Options) ParseAndSort(s string) ([]*QValue, error) {
-	return o.parse(s, true)
+	result, err := o.Parse(s)
+	if err != nil {
+		return result, err
+	}
+
+	Sort(result)
+
+	return result, nil
 }
